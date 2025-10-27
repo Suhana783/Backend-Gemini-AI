@@ -296,42 +296,65 @@ h1 {
 
 /* Response Display Below Ask Form */
 .ask-response-display {
-    width: 100%;
-    max-width: 600px;
-    margin-top: 40px;
-    padding: 20px;
-    text-align: left;
-    background-color: rgba(64, 4, 109, 0.7);
-    border-radius: 12px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 40px;
+  padding: 20px;
+  text-align: left;
+  background-color: rgba(64, 4, 109, 0.85); /* was 0.7 */
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+  /* Prevent the card from growing too tall */
+  max-height: 360px;
+  overflow: hidden; /* keep overflow inside the card */
 }
 
-.ask-response-display h2 {
-    font-size: 1.5em;
-    color: #ffffff;
-    margin-bottom: 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 5px;
+/* Scrollable inner area for long responses */
+.content-display-ask {
+  overflow: auto;
+  /* reserve space for the heading and clear button inside the card */
+  max-height: calc(360px - 56px);
+  padding-right: 8px;
+  color: #f5f5f5;
 }
 
-.ask-response-display p {
-    white-space: pre-wrap;
-    color: #e0e0e0;
-    font-style: italic;
-    font-size: 1.1em;
-    margin-bottom: 0;
+/* Optional: small, subtle scrollbar styling for WebKit browsers */
+.content-display-ask::-webkit-scrollbar {
+  width: 10px;
+}
+.content-display-ask::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.25);
+  border-radius: 8px;
 }
 
 .clear-ask-btn {
-    background-color: #ab0b0d;
-    color: white;
-    border: none;
-    padding: 8px 18px;
-    border-radius: 6px;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 10px;
-    float: right;
+  display: inline-block;
+  width: auto;               /* shrink-to-fit content */
+  float: none;               /* remove float; align with flex container below */
+  align-self: flex-end;      /* place it to the right inside the response card */
+  padding: 8px 14px;         /* compact, content-sized padding */
+  border-radius: 8px;        /* slightly rounded */
+  background-color: #ab0b0d; /* keep red */
+  color: #fff;
+  box-shadow: none;
+  margin-top: 12px;
+}
+
+/* make clear response button smoothly blur/disable while disabled */
+.clear-ask-btn {
+  transition: opacity 160ms ease, filter 160ms ease, transform 160ms ease;
+}
+
+.clear-ask-btn:disabled {
+  opacity: 0.36;
+  filter: blur(1.4px) grayscale(0.45);
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none;
+  transform: translateY(0); /* prevent active/pressed visual */
 }
 
 .back-btn {
@@ -353,10 +376,25 @@ h1 {
   text-overflow: ellipsis; /* safe on very small screens */
   display: inline-block;
   font-size: 3.4em;        /* increased font size */
-  color: #45045d; 
+  color: #4d0269; 
   font-weight: 700;
   line-height: 1;
   text-align: center;
+}
+
+/* make inner response text crisper and more readable */
+.ask-response-display p {
+  white-space: pre-wrap;
+  color: #f5f5f5;             /* brighter text for contrast */
+  font-style: normal;         /* remove italic which can look thin/blurry */
+  font-size: 1.05rem;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.ask-response-display h2 {
+  color: #e4d2f6; /* purple — adjust hex if you prefer a different shade */
+  font-weight: 700;
 }
 
 /* Responsive adjustments */
