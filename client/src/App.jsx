@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import './App.css'; 
-import { AskView } from './AskView.jsx'; // <-- IMPORT THE NEWLY CREATED FILE HERE
+import { AskView } from './AskView.jsx';
 
 function App() {
   const STATIC_SUBTITLE = "Your personal AI assistant for jokes, motivation, and daily tips";
+  // FIX: Base URL is now defined here.
+  const API_BASE_URL = 'https://gemini-ai-helper.onrender.com';
 
   // --- STATE ---
   const [content, setContent] = useState(''); 
@@ -24,7 +26,8 @@ function App() {
     setContent('Thinking...'); 
 
     try {
-      const response = await fetch(`/api/${feature}`, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+      // FIX APPLIED: Uses the full absolute URL for deployment
+      const response = await fetch(`${API_BASE_URL}/api/${feature}`, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
       const data = await response.json();
       if (response.ok && data.content) { setContent(data.content); } else { setContent(`Error: ${data.error || 'Failed to fetch content.'}`); }
     } catch (error) {
@@ -45,7 +48,8 @@ function App() {
     setAskResponse('Thinking...'); 
     
     try {
-        const response = await fetch('/api/ask', { 
+        // FIX APPLIED: Uses the full absolute URL for deployment
+        const response = await fetch(`${API_BASE_URL}/api/ask`, { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: userQuestion }),
@@ -119,7 +123,7 @@ function App() {
   return (
     <>
       <div className="container">
-        {/* Conditional Rendering: Now uses the imported AskView component */}
+        {/* Conditional Rendering: Renders the appropriate view component */}
         {currentView === 'cards' ? 
           <CardsView /> 
           : 
