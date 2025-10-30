@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import './App.css'; 
-import { AskView } from './AskView.jsx';
+import { AskView } from './AskView.jsx'; // <-- IMPORT THE NEWLY CREATED FILE HERE
 
 function App() {
   const STATIC_SUBTITLE = "Your personal AI assistant for jokes, motivation, and daily tips";
-  // FIX: Absolute URL for the deployed Render backend
-  const API_BASE_URL = 'https://gemini-ai-helper.onrender.com';
 
   // --- STATE ---
   const [content, setContent] = useState(''); 
@@ -26,8 +24,7 @@ function App() {
     setContent('Thinking...'); 
 
     try {
-      // FIX APPLIED: Uses the absolute URL for the live deployment
-      const response = await fetch(`${API_BASE_URL}/api/${feature}`, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+      const response = await fetch(`/api/${feature}`, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
       const data = await response.json();
       if (response.ok && data.content) { setContent(data.content); } else { setContent(`Error: ${data.error || 'Failed to fetch content.'}`); }
     } catch (error) {
@@ -48,8 +45,7 @@ function App() {
     setAskResponse('Thinking...'); 
     
     try {
-        // FIX APPLIED: Uses the absolute URL for the live deployment
-        const response = await fetch(`${API_BASE_URL}/api/ask`, { 
+        const response = await fetch('/api/ask', { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: userQuestion }),
