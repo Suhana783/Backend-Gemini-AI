@@ -2,17 +2,33 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const path = require('path');
+const cors = require('cors'); // <-- NEW: Import CORS middleware
 const { GoogleGenAI } = require('@google/genai');
+
+// --- CORS Configuration (FIX: Allows Netlify Frontend to connect to Render API) ---
+const allowedOrigin = 'https://gemini-ai-helper.netlify.app';
+
+app.use(cors({
+    origin: allowedOrigin,
+    methods: ['GET', 'POST'], // Your frontend uses both GET (cards) and POST (Ask)
+    credentials: true,
+}));
 
 app.use(express.json());
 
+const PORT = process.env.PORT || 3000;
+
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
+// Helper Function: Uses gemini-2.5-flash and maxOutputTokens for speed
 const generateContent = async (prompt) => {
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
             contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            config: {
+                maxOutputTokens: 150, 
+            }
         });
         return response.text;
     } catch (error) {
@@ -21,7 +37,7 @@ const generateContent = async (prompt) => {
     }
 };
 
-// 1. POST ROUTE: Free-Form Question (Used by the Modal)
+// 1. POST ROUTE: Free-Form Question
 app.post('/api/ask', async (req, res) => {
     const userQuestion = req.body.question;
     
@@ -35,10 +51,7 @@ app.post('/api/ask', async (req, res) => {
             contents: [{ role: 'user', parts: [{ text: userQuestion }] }],
         });
 
-        // Use 'answer' key for compatibility, frontend will handle this
-        res.json({ 
-            answer: response.text 
-        });
+        res.json({ answer: response.text });
 
     } catch (error) {
         console.error(error);
@@ -60,7 +73,7 @@ app.get('/api/joke', async (req, res) => {
 // 3. GET ROUTE: Motivation Boost
 app.get('/api/motivation', async (req, res) => {
     try {
-        const prompt = "Generate a concise, powerful motivational quote suitable for a tip of the day.";
+        const prompt = "Generate a concise, powerful motivational quote.";
         const quote = await generateContent(prompt);
         res.json({ content: quote });
     } catch (error) {
@@ -80,8 +93,7 @@ app.get('/api/tip-of-the-day', async (req, res) => {
 });
 
 
-const PORT = 3000;
-
+// Start Server (Uses dynamic port for Render)
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });
