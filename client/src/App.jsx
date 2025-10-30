@@ -5,7 +5,6 @@ import { AskView } from './AskView.jsx'; // <-- IMPORT THE NEWLY CREATED FILE HE
 function App() {
   const STATIC_SUBTITLE = "Your personal AI assistant for jokes, motivation, and daily tips";
   
-  const API_BASE_URL = "https://gemini-ai-helper.onrender.com"
   // --- STATE ---
   const [content, setContent] = useState(''); 
   const [isLoading, setIsLoading] = useState(false);
